@@ -1,4 +1,4 @@
 from game import *
 
 tetris = Game()
-tetris.run()
+tetris.tick()
