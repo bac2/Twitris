@@ -14,12 +14,14 @@ class Game:
 		self.tetroids.append(self.currentTetroid)
 
 	def left():
-		skip
+		for x in self.currentTetroid.squares:
+			x[0] = x[0]-1
+
 	def right():
-		skip
+		for x in self.currentTetroid.squares:
+			x[0] = x[0]+1
 	def rotate():
 		skip
-
         def tick(self):
 		#drop current tetroid 1 space
 		mins = []
