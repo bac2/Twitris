@@ -15,12 +15,27 @@ class Game:
 		self.lines = 0
 
 	def left(self):
+		tetroids = self.tetroids
+		for x in self.currentTetroid.squares:
+			for y in tetroids.squares:
+				if(x[0]-1 == y[0] && x[1] == y[1]):
+					#something to the left
+					return
+
 		for x in self.currentTetroid.squares:
 			x[0] = x[0]-1
 
 	def right(self):
+		tetroids = self.tetroids
+		for x in self.currentTetroid.squares:
+			for y in tetroids.squares:
+				if(x[0]+1 == y[0] && x[1] == y[1]):
+					return
+				#Something to the right
+
 		for x in self.currentTetroid.squares:
 			x[0] = x[0]+1
+
 	def rotate(self):
 		skip
 
