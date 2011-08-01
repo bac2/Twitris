@@ -18,7 +18,7 @@ class Game:
 		tetroids = self.tetroids
 		for x in self.currentTetroid.squares:
 			for y in tetroids.squares:
-				if(x[0]-1 == y[0] && x[1] == y[1]):
+				if(x[0]-1 == y[0] and x[1] == y[1]):
 					#something to the left
 					return
 
@@ -29,7 +29,7 @@ class Game:
 		tetroids = self.tetroids
 		for x in self.currentTetroid.squares:
 			for y in tetroids.squares:
-				if(x[0]+1 == y[0] && x[1] == y[1]):
+				if(x[0]+1 == y[0] and x[1] == y[1]):
 					return
 				#Something to the right
 
@@ -42,7 +42,7 @@ class Game:
 	def occupied(self, x, y):
 		for i in self.tetroids:
 			for j in i.squares:
-				if(j[0] == x && j[1] == y):
+				if(j[0] == x and j[1] == y):
 					return True
 		return False
 
