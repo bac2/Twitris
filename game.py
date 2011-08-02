@@ -15,23 +15,28 @@ class Game:
 		self.lines = 0
 
 	def left(self):
-		tetroids = self.tetroids
-		for x in self.currentTetroid.squares:
-			for y in tetroids.squares:
-				if(x[0]-1 == y[0] and x[1] == y[1]):
+		for x in self.findLefts():
+			if( x[0] <= 0):
+				return False
+			for y in self.tetroids:
+			    for z in y.squares:
+				if(x[0]-1 == z[0] and x[1] == z[1]):
 					#something to the left
-					return
+					return False
 
 		for x in self.currentTetroid.squares:
 			x[0] = x[0]-1
 
 	def right(self):
-		tetroids = self.tetroids
-		for x in self.currentTetroid.squares:
-			for y in tetroids.squares:
-				if(x[0]+1 == y[0] and x[1] == y[1]):
-					return
-				#Something to the right
+		
+		for x in self.findRights():
+			if( x[0] >= self.gridWidth-1):
+				return False
+			for y in self.tetroids:
+                            for z in y.squares:
+				if(x[0]+1 == z[0] and x[1] == z[1]):
+					return False
+					#Something to the right
 
 		for x in self.currentTetroid.squares:
 			x[0] = x[0]+1
@@ -46,21 +51,45 @@ class Game:
 					return True
 		return False
 
+	def findLefts(self):	
+		self.lefts = []
+		for square in self.currentTetroid.squares:
+		    if(len(self.lefts) == 0):
+		        self.lefts.append(square)
+		    else:
+                        for x in self.lefts:
+			    if(square[1] == x[1] and square[0] < x[0]):
+			        self.lefts.append(square)
+			        self.lefts.remove(x)
+		return self.lefts
+
+	def findRights(self):	
+		self.rights = []
+		for square in self.currentTetroid.squares:
+		    if(len(self.rights) == 0):
+		        self.rights.append(square)
+		    else:
+                        for x in self.rights:
+			    if(square[1] == x[1] and square[0] > x[0]):
+			        self.rights.append(square)
+			        self.rights.remove(x)
+		return self.rights
+
 	def findMins(self):	
-		mins = []
-		for x in self.currentTetroid.squares:
-			for y in self.currentTetroid.squares:
-				curMin = y
-				if(x[1] == y[1]): #y values are the same
-					if(x[0]<y[0]):
-						curMin = x
-			if( curMin not in mins ):
-				mins.append(curMin)
-		return mins
+		self.mins = []
+		for square in self.currentTetroid.squares:
+		    if( len(self.mins) == 0):
+		        self.mins.append(square)
+		    else:
+		        for x in self.mins:
+			    if(square[0] == x[0] and square[0] < x[0]):
+			        self.mins.append(square)
+			        self.mins.remove(x)
+		return self.mins
 
 	def clearBelow(self):
-		
-		for coord in mins:
+		self.mins = self.findMins()	
+		for coord in self.mins:
 			for x in self.tetroids:
 				for y in x.squares:
 					if( ( coord[0] == y[0] and coord[1]-1 == y[1] ) or coord[1] == 0 ):
@@ -71,8 +100,10 @@ class Game:
 	def checkLines(self):
 		for y in range(0, self.gridHeight):
 			for x in range(0, self.gridWidth):
-				if( not occupied(x,y)):
-					continue
+				if( not self.occupied(x,y)):
+					self.line = False
+			if( not self.line ):
+			    continue;
 			print "line found!!"
 			self.lines += 1
 			#Move all lines above down by 1
@@ -83,15 +114,16 @@ class Game:
 
 	def tick(self):
 		#drop current tetroid 1 space
-		mins = self.findMins()
+		self.mins = self.findMins()
 		#mins holds minimum items, check below them.
-		if(not clearBelow()):
-			checkLines()
+		
+		if( not self.clearBelow() ):
+			self.checkLines()
 			self.currentTetroid = Tetroid()
-			Tetroids.append(self.currentTetroid)
+			self.tetroids.append(self.currentTetroid)
 		
 		else:
 			#Nothing below then move down
 			for x in self.currentTetroid.squares:
-			x[1] = x[1]-1
+				x[1] = x[1]-1
 

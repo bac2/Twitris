@@ -1,4 +1,5 @@
 from game import *
+import random
 class Controller:
 
     def visualise(self):
@@ -22,9 +23,14 @@ tetris = Game()
 c.visualise()
 tetris.tick()
 tetris.left()
+tetris.left()
 c.visualise()
 
 while (True):
     c.visualise()
     tetris.tick()
+    if(random.random() < 0.5):
+	tetris.right()
+    else:
+        tetris.left()
     time.sleep(1)
