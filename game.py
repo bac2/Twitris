@@ -1,18 +1,55 @@
 import random, time
 
 class Tetroid:
-	def __init__(self):
-		self.type = random.randint(0,4)
+	def __init__(self, tetris):
+		self.type = random.randint(0,6)
 		self.colour = random.randint(0,4)
-		self.squares = [[8,8], [8,9], [9,9], [9,8]]
+		self.mid = tetris.gridWidth / 2
+		self.gridHeight = tetris.gridHeight-1
+		if(self.type == 0): #Long shape
+		    self.squares = [[self.mid,self.gridHeight],
+				    [self.mid,self.gridHeight-1],
+				    [self.mid,self.gridHeight-2],
+				    [self.mid,self.gridHeight-3]]
+		elif(self.type == 1): #S shape
+		    self.squares = [[self.mid,self.gridHeight],
+				    [self.mid+1, self.gridHeight],
+				    [self.mid,self.gridHeight-1],
+				    [self.mid-1,self.gridHeight-1]]
+		elif(self.type == 2): #T Shape
+		    self.squares = [[self.mid,self.gridHeight],
+				    [self.mid+1,self.gridHeight],
+				    [self.mid,self.gridHeight-1],
+				    [self.mid-1,self.gridHeight-1]]
+		elif(self.type == 3): #Box
+		    self.squares = [[self.mid, self.gridHeight],
+				    [self.mid+1,self.gridHeight],
+				    [self.mid-1,self.gridHeight],
+				    [self.mid,self.gridHeight-1]] 
+		elif(self.type = 4): #L shape left
+		    self.squares = [[self.mid, self.gridHeight],
+				    [self.mid, self.gridHeight-1],
+				    [self.mid, self.gridHeight-2],
+				    [self.mid-1, self.gridHeight-2]]
+	 	elif(self.type = 5): #L shape right
+		    self.squares = [[self.mid, self.gridHeight],
+				    [self.mid, self.gridHeight-1],
+				    [self.mid, self.gridHeight-2],
+				    [self.mid+1, self.gridHeight-2]]
+		elif(self.type = 6): #Z shape
+		    self.squares = [[self.mid, self.gridHeight],
+				    [self.mid-1, self.gridHeight],
+				    [self.mid, self.gridHeight-1],
+				    [self.mid+1, self.gridHeight-1]]
 class Game:
 	def __init__(self):
 		self.tetroids = []
 		self.gridHeight = 20
 		self.gridWidth = 10
-		self.currentTetroid = Tetroid()
+		self.currentTetroid = Tetroid(self)
 		self.tetroids.append(self.currentTetroid)
 		self.lines = 0
+		self.check = False
 
 	def left(self):
 		for x in self.findLefts():
@@ -54,37 +91,37 @@ class Game:
 	def findLefts(self):	
 		self.lefts = []
 		for square in self.currentTetroid.squares:
-		    if(len(self.lefts) == 0):
 		        self.lefts.append(square)
-		    else:
                         for x in self.lefts:
-			    if(square[1] == x[1] and square[0] < x[0]):
-			        self.lefts.append(square)
-			        self.lefts.remove(x)
+			    if(square[1] == x[1]): 
+			        if( square[0] < x[0] ):
+				    self.lefts.remove(x)
+				elif( square[0] > x[0] ):
+				    self.lefts.remove(square)
 		return self.lefts
 
 	def findRights(self):	
 		self.rights = []
 		for square in self.currentTetroid.squares:
-		    if(len(self.rights) == 0):
 		        self.rights.append(square)
-		    else:
                         for x in self.rights:
-			    if(square[1] == x[1] and square[0] > x[0]):
-			        self.rights.append(square)
-			        self.rights.remove(x)
+			    if(square[1] == x[1]): 
+			        if( square[0] > x[0]):
+				    self.rights.remove(x)
+				elif( square[0] < x[0]):
+				    self.rights.remove(square)
 		return self.rights
 
 	def findMins(self):	
 		self.mins = []
 		for square in self.currentTetroid.squares:
-		    if( len(self.mins) == 0):
 		        self.mins.append(square)
-		    else:
 		        for x in self.mins:
-			    if(square[0] == x[0] and square[0] < x[0]):
-			        self.mins.append(square)
-			        self.mins.remove(x)
+			    if(square[0] == x[0]):
+				if( square[1] < x[1]): 
+			            self.mins.remove(x)
+				elif(square[1] > x[1]):
+				    self.mins.remove(square)
 		return self.mins
 
 	def clearBelow(self):
@@ -116,12 +153,15 @@ class Game:
 		#drop current tetroid 1 space
 		self.mins = self.findMins()
 		#mins holds minimum items, check below them.
-		
-		if( not self.clearBelow() ):
+		if(self.check):
 			self.checkLines()
-			self.currentTetroid = Tetroid()
+			self.currentTetroid = Tetroid(self)
 			self.tetroids.append(self.currentTetroid)
-		
+			self.check = False
+
+		if( not self.clearBelow() ):
+		    self.check = True
+
 		else:
 			#Nothing below then move down
 			for x in self.currentTetroid.squares:

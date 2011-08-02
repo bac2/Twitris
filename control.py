@@ -21,10 +21,6 @@ class Controller:
 c = Controller()
 tetris = Game()
 c.visualise()
-tetris.tick()
-tetris.left()
-tetris.left()
-c.visualise()
 
 while (True):
     c.visualise()
