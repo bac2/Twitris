@@ -14,6 +14,8 @@ class Controller:
            for y in x.squares:
 		print y[0], y[1]
                 self.arr[y[1]][y[0]] = 1
+	for y in tetris.currentTetroid.squares:
+	    self.arr[y[1]][y[0]] = 1
 	self.arr.reverse()
 	for x in self.arr:
 	    print x
@@ -25,8 +27,5 @@ c.visualise()
 while (True):
     c.visualise()
     tetris.tick()
-    if(random.random() < 0.5):
-	tetris.right()
-    else:
-        tetris.left()
+    tetris.rotate()
     time.sleep(1)

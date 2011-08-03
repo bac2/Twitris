@@ -26,17 +26,17 @@ class Tetroid:
 				    [self.mid+1,self.gridHeight],
 				    [self.mid-1,self.gridHeight],
 				    [self.mid,self.gridHeight-1]] 
-		elif(self.type = 4): #L shape left
+		elif(self.type == 4): #L shape left
 		    self.squares = [[self.mid, self.gridHeight],
 				    [self.mid, self.gridHeight-1],
 				    [self.mid, self.gridHeight-2],
 				    [self.mid-1, self.gridHeight-2]]
-	 	elif(self.type = 5): #L shape right
+	 	elif(self.type == 5): #L shape right
 		    self.squares = [[self.mid, self.gridHeight],
 				    [self.mid, self.gridHeight-1],
 				    [self.mid, self.gridHeight-2],
 				    [self.mid+1, self.gridHeight-2]]
-		elif(self.type = 6): #Z shape
+		elif(self.type == 6): #Z shape
 		    self.squares = [[self.mid, self.gridHeight],
 				    [self.mid-1, self.gridHeight],
 				    [self.mid, self.gridHeight-1],
@@ -47,7 +47,6 @@ class Game:
 		self.gridHeight = 20
 		self.gridWidth = 10
 		self.currentTetroid = Tetroid(self)
-		self.tetroids.append(self.currentTetroid)
 		self.lines = 0
 		self.check = False
 
@@ -79,7 +78,34 @@ class Game:
 			x[0] = x[0]+1
 
 	def rotate(self):
-		skip
+	    self.tempSquares = []
+	    self.origin = self.currentTetroid.squares[0]
+	    print self.origin
+	    for x in self.currentTetroid.squares:
+		self.tempSquares.append([x[1] - self.origin[1] + self.origin[0], -x[0] + self.origin[0] + self.origin[1]])
+	    self.tempSquares2 = self.currentTetroid.squares
+	    self.currentTetroid.squares = self.tempSquares
+	    for x in self.findLefts():
+	        if( self.occupied(x[0],x[1]) or x[0] < 0):
+		    self.currentTetroid.squares = self.tempSquares2
+		    print "left"
+		    return False
+	    for x in self.findRights():
+		if( self.occupied(x[0],x[1]) or x[0] >= self.gridWidth):
+		    self.currentTetroid.squares = self.tempSquares2
+		    print "right"
+		    return False
+	    for x in self.findMins():
+		if( self.occupied(x[0],x[1]) or x[1] < 0 ):
+		    self.currentTetroid.squares = self.tempSquares2
+		    print x
+		    print "min"
+		    return False
+ 	    for x in self.findMaxs():
+	        if( self.occupied(x[0],x[1]) or x[1] >= self.gridHeight ):
+		    self.currentTetroid.squares = self.tempSquares2
+		    print "max"
+		    return False
 
 	def occupied(self, x, y):
 		for i in self.tetroids:
@@ -124,12 +150,24 @@ class Game:
 				    self.mins.remove(square)
 		return self.mins
 
+	def findMaxs(self):
+		self.maxs = []
+		for square in self.currentTetroid.squares:
+		        self.maxs.append(square)
+		        for x in self.maxs:
+			    if(square[0] == x[0]):
+				if( square[1] > x[1]): 
+			            self.maxs.remove(x)
+				elif(square[1] < x[1]):
+				    self.maxs.remove(square)
+		return self.maxs
+
 	def clearBelow(self):
 		self.mins = self.findMins()	
 		for coord in self.mins:
 			for x in self.tetroids:
 				for y in x.squares:
-					if( ( coord[0] == y[0] and coord[1]-1 == y[1] ) or coord[1] == 0 ):
+					if( ( coord[0] == y[0] and coord[1]-1 == y[1] ) or coord[1] < 0 ):
 						#Stop the shape
 						return False
 		return True
@@ -155,8 +193,8 @@ class Game:
 		#mins holds minimum items, check below them.
 		if(self.check):
 			self.checkLines()
-			self.currentTetroid = Tetroid(self)
 			self.tetroids.append(self.currentTetroid)
+			self.currentTetroid = Tetroid(self)
 			self.check = False
 
 		if( not self.clearBelow() ):
