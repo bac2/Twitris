@@ -165,9 +165,11 @@ class Game:
 	def clearBelow(self):
 		self.mins = self.findMins()	
 		for coord in self.mins:
+			if( coord[1] <= 0 ):
+			    return False
 			for x in self.tetroids:
 				for y in x.squares:
-					if( ( coord[0] == y[0] and coord[1]-1 == y[1] ) or coord[1] < 0 ):
+					if( ( coord[0] == y[0] and coord[1]-1 == y[1] )  ):
 						#Stop the shape
 						return False
 		return True
@@ -189,8 +191,6 @@ class Game:
 
 	def tick(self):
 		#drop current tetroid 1 space
-		self.mins = self.findMins()
-		#mins holds minimum items, check below them.
 		if(self.check):
 			self.checkLines()
 			self.tetroids.append(self.currentTetroid)
