@@ -1,4 +1,5 @@
 from game import *
+from server import *
 import random
 class Controller:
 
@@ -23,9 +24,11 @@ class Controller:
 c = Controller()
 tetris = Game()
 c.visualise()
+s = Server("127.0.0.1", 6500)
 
 while (True):
     c.visualise()
     tetris.tick()
     tetris.rotate()
+    s.sendEvent(tetris.tetroids)
     time.sleep(1)
