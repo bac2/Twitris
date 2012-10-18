@@ -41,8 +41,8 @@ class Controller:
     
     def tick(self):
       self.visualise()
-      self.game.tick()
       self.game.rotate()
+      self.game.tick()
       self.sendEvent()
       time.sleep(1)
 
